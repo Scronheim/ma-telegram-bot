@@ -17,14 +17,14 @@ export const searchBands = async (bot, chatId, query) => {
     const searchResult = await api.searchBands(query)
 
     // Single result - show band directly
-    if (searchResult.bands.length === 1) {
-      const band = await api.getBandById(searchResult.bands[0].id)
+    if (searchResult.results.length === 1) {
+      const band = await api.getBandById(searchResult.results[0].id)
       await sendBandInfo(bot, chatId, band, loadingMsg.message_id)
       return
     }
 
     // No results
-    if (!searchResult.bands || searchResult.bands.length === 0) {
+    if (!searchResult.results || searchResult.results.length === 0) {
       await bot.editMessageText(messages.NO_RESULTS(query), {
         chat_id: chatId,
         message_id: loadingMsg.message_id
@@ -33,14 +33,14 @@ export const searchBands = async (bot, chatId, query) => {
     }
 
     // Multiple results
-    const resultsToShow = searchResult.bands.slice(0, config.search.maxResults)
+    const resultsToShow = searchResult.results.slice(0, config.search.maxResults)
     const message = formatSearchResults(query, searchResult, resultsToShow)
     const keyboard = createSearchResultsKeyboard(resultsToShow)
 
     userState.set(chatId, {
       state: 'search_results',
       searchQuery: query,
-      searchResults: searchResult.bands,
+      searchResults: searchResult.results,
       displayedResults: resultsToShow
     })
 

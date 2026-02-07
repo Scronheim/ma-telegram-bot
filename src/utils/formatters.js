@@ -37,10 +37,10 @@ ${tracklist}
 
 export const formatSearchResults = (query, searchResult, resultsToShow) => {
   let message = `🎸 *Результаты поиска для "${query}"*\n\n`
-  message += `Найдено групп: *${searchResult.bands.length}*\n`
+  message += `Найдено групп: *${searchResult.results.length}*\n`
 
-  if (searchResult.bands.length > resultsToShow.length) {
-    message += `\n_Показано ${resultsToShow.length} из ${searchResult.bands.length} результатов. Уточните запрос для более точного поиска._`
+  if (searchResult.results.length > resultsToShow.length) {
+    message += `\n_Показано ${resultsToShow.length} из ${searchResult.results.length} результатов. Уточните запрос для более точного поиска._`
   }
 
   return message
