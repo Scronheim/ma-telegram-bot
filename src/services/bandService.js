@@ -15,7 +15,7 @@ export const sendBandInfo = async (bot, chatId, band, loadingMsgId = null, isRan
   try {
     if (band.photo_url || band.logo_url) {
       const imageUrl = band.photo_url ? band.photo_url : band.logo_url
-      await bot.sendPhoto(chatId, imageUrl, {
+      await bot.sendPhoto(chatId, `${messages.MA_URL}${imageUrl}`, {
         caption: bandInfo,
         ...options
       })

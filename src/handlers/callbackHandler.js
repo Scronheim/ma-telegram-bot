@@ -21,7 +21,7 @@ const handleCallback = async (bot, callbackQuery) => {
     if (data === 'show_logo') {
       await bot.answerCallbackQuery(callbackQuery.id)
       if (userStateData?.band?.logo_url) {
-        await bot.sendPhoto(chatId, userStateData.band.logo_url, {
+        await bot.sendPhoto(chatId, `${messages.MA_URL}${userStateData.band.logo_url}`, {
           caption: `🎨 Логотип ${userStateData.band.name}`
         })
       }
@@ -109,7 +109,7 @@ ${formattedAlbumInfo}
   }
 
   if (albumInfo.cover_url) {
-    await bot.sendPhoto(chatId, albumInfo.cover_url, {
+    await bot.sendPhoto(chatId, `${messages.MA_URL}${albumInfo.cover_url}`, {
       caption: albumMessage,
       parse_mode: 'Markdown',
       reply_markup: { inline_keyboard: keyboard }
@@ -128,7 +128,7 @@ const handleBackToBand = async (bot, callbackQuery, userStateData) => {
 
   if (userStateData?.lastBandInfo && userStateData?.band) {
     const keyboard = createBandKeyboard(userStateData.band)
-    await bot.sendPhoto(chatId, userStateData.band.photo_url, {
+    await bot.sendPhoto(chatId, `${messages.MA_URL}${userStateData.band.photo_url}`, {
       caption: userStateData.lastBandInfo,
       parse_mode: 'Markdown',
       reply_markup: keyboard
