@@ -1,6 +1,6 @@
 export const createMainMenuKeyboard = () => ({
   reply_markup: {
-    keyboard: [['🎲 Случайная группа'], ['🔍 Поиск группы']],
+    keyboard: [['🎲 Случайная группа']],
     resize_keyboard: true,
     one_time_keyboard: false
   }
