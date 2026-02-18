@@ -18,8 +18,8 @@ class MetalArchiveAPI {
 
   async searchBands(query) {
     try {
-      const response = await axios.get(`${this.baseURL}/band/search?field=name&query=${encodeURIComponent(query)}`)
-      return response.data
+      const response = await axios.get(`${this.baseURL}/band/search?query=${encodeURIComponent(query)}`)
+      return response.data.data
     } catch (error) {
       console.error('Error searching bands:', error.message)
       throw error

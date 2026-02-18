@@ -1,11 +1,11 @@
-import TelegramBot from 'node-telegram-bot-api'
+import { Telegraf } from 'telegraf'
 import config from './config/config.js'
 import { registerCommands } from './handlers/commandHandler.js'
 import { registerMessageHandler } from './handlers/messageHandler.js'
 import { registerCallbackHandler } from './handlers/callbackHandler.js'
 import { registerInlineQueryHandler } from './handlers/inlineQueryHandler.js'
 
-const bot = new TelegramBot(config.telegram.token, config.telegram.pollingOptions)
+const bot = new Telegraf(config.telegram.token)
 
 // Register all handlers
 registerCommands(bot)
@@ -17,5 +17,5 @@ registerInlineQueryHandler(bot)
 bot.on('polling_error', error => {
   console.error('Polling error:', error)
 })
-
 console.log('🤘 Metal Archives Bot запущен! 🤘')
+await bot.launch()

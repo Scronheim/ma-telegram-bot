@@ -6,22 +6,23 @@ import { formatAlbumInfo } from '../utils/formatters.js'
 import { createMainMenuKeyboard, createBandKeyboard } from '../utils/keyboards.js'
 import messages from '../constants/messages.js'
 
-const handleCallback = async (bot, callbackQuery) => {
-  const chatId = callbackQuery.message.chat.id
-  const data = callbackQuery.data
+const handleCallback = async ctx => {
+  const chatId = ctx.update.callback_query.message.chat.id
+  const callbackQueryId = ctx.update.callback_query.id
+  const data = ctx.update.callback_query.data
   const userStateData = userState.get(chatId)
 
   try {
     if (data === 'random_again') {
-      await bot.answerCallbackQuery(callbackQuery.id)
-      await sendRandomBand(bot, chatId)
+      await ctx.answerCbQuery(callbackQueryId)
+      await sendRandomBand(ctx, chatId)
       return
     }
 
     if (data === 'show_logo') {
-      await bot.answerCallbackQuery(callbackQuery.id)
+      await ctx.answerCbQuery(callbackQueryId)
       if (userStateData?.band?.logo_url) {
-        await bot.sendPhoto(chatId, `${messages.MA_URL}${userStateData.band.logo_url}`, {
+        await ctx.sendPhoto(chatId, `${messages.MA_URL}${userStateData.band.logo_url}`, {
           caption: `🎨 Логотип ${userStateData.band.name}`
         })
       }
@@ -30,60 +31,59 @@ const handleCallback = async (bot, callbackQuery) => {
 
     if (data.startsWith('search_select_')) {
       const bandId = data.replace('search_select_', '')
-      await bot.answerCallbackQuery(callbackQuery.id, {
+      await ctx.answerCbQuery(callbackQueryId, {
         text: messages.BAND_LOADING
       })
-      await sendBandFromSearch(bot, chatId, bandId)
+      await sendBandFromSearch(ctx, chatId, bandId)
       return
     }
 
     if (data === 'back_to_search') {
-      await bot.answerCallbackQuery(callbackQuery.id)
+      await ctx.answerCbQuery(callbackQueryId)
       if (userStateData.searchResults && userStateData.searchQuery) {
-        await searchBands(bot, chatId, userStateData.searchQuery)
+        await searchBands(ctx, chatId, userStateData.searchQuery)
       } else {
-        bot.sendMessage(chatId, messages.SEARCH_PROMPT)
+        ctx.sendMessage(chatId, messages.SEARCH_PROMPT)
         userState.set(chatId, { state: 'searching' })
       }
       return
     }
 
     if (data === 'new_search') {
-      await bot.answerCallbackQuery(callbackQuery.id)
-      bot.sendMessage(chatId, messages.SEARCH_PROMPT)
+      await ctx.answerCbQuery(callbackQueryId)
+      ctx.sendMessage(chatId, messages.SEARCH_PROMPT)
       userState.set(chatId, { state: 'searching' })
       return
     }
 
     if (data === 'main_menu') {
-      await bot.answerCallbackQuery(callbackQuery.id)
+      await ctx.answerCbQuery(callbackQueryId)
       userState.delete(chatId)
-      await bot.sendMessage(chatId, messages.MAIN_MENU, createMainMenuKeyboard())
+      await ctx.sendMessage(chatId, messages.MAIN_MENU, createMainMenuKeyboard())
       return
     }
 
     if (data.startsWith('album_')) {
-      await handleAlbumCallback(bot, callbackQuery, data, userStateData)
+      await handleAlbumCallback(ctx, callbackQueryId, data, userStateData)
       return
     }
 
     if (data === 'back_to_band') {
-      await handleBackToBand(bot, callbackQuery, userStateData)
+      await handleBackToBand(ctx, userStateData)
       return
     }
   } catch (error) {
     console.error('Error in callback query:', error)
-    await bot.answerCallbackQuery(callbackQuery.id, {
+    await ctx.answerCbQuery(callbackQueryId, {
       text: 'Произошла ошибка'
     })
   }
 }
 
-const handleAlbumCallback = async (bot, callbackQuery, data, userStateData) => {
-  const chatId = callbackQuery.message.chat.id
+const handleAlbumCallback = async (ctx, callbackQueryId, data, userStateData) => {
   const albumId = data.replace('album_', '')
 
-  await bot.answerCallbackQuery(callbackQuery.id, {
+  await ctx.answerCbQuery(callbackQueryId, {
     text: messages.ALBUM_LOADING
   })
 
@@ -109,26 +109,23 @@ ${formattedAlbumInfo}
   }
 
   if (albumInfo.cover_url) {
-    await bot.sendPhoto(chatId, `${messages.MA_URL}${albumInfo.cover_url}`, {
+    await ctx.replyWithPhoto(`${messages.MA_URL}${albumInfo.cover_url}`, {
       caption: albumMessage,
       parse_mode: 'Markdown',
       reply_markup: { inline_keyboard: keyboard }
     })
   } else {
-    await bot.sendMessage(chatId, albumMessage, {
+    await ctx.reply(albumMessage, {
       parse_mode: 'Markdown',
       reply_markup: { inline_keyboard: keyboard }
     })
   }
 }
 
-const handleBackToBand = async (bot, callbackQuery, userStateData) => {
-  const chatId = callbackQuery.message.chat.id
-  await bot.answerCallbackQuery(callbackQuery.id)
-
+const handleBackToBand = async (ctx, userStateData) => {
   if (userStateData?.lastBandInfo && userStateData?.band) {
     const keyboard = createBandKeyboard(userStateData.band)
-    await bot.sendPhoto(chatId, `${messages.MA_URL}${userStateData.band.photo_url}`, {
+    await ctx.replyWithPhoto(`${messages.MA_URL}${userStateData.band.photo_url}`, {
       caption: userStateData.lastBandInfo,
       parse_mode: 'Markdown',
       reply_markup: keyboard
@@ -136,6 +133,6 @@ const handleBackToBand = async (bot, callbackQuery, userStateData) => {
   }
 }
 
-export const registerCallbackHandler = bot => {
-  bot.on('callback_query', query => handleCallback(bot, query))
+export const registerCallbackHandler = ctx => {
+  ctx.on('callback_query', ctx => handleCallback(ctx))
 }

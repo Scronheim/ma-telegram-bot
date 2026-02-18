@@ -1,5 +1,5 @@
 export const formatBandInfo = band => {
-  const currentLineup = band.current_lineup?.map(l => `${l.name} - ${l.role}`).join('\n') || ''
+  const currentLineup = band.current_lineup?.map(l => `${l.fullname} - ${l.role}`).join('\n') || ''
   return `
 🎸 *${band.name}* 🎸
 
@@ -37,10 +37,10 @@ ${tracklist}
 
 export const formatSearchResults = (query, searchResult, resultsToShow) => {
   let message = `🎸 *Результаты поиска для "${query}"*\n\n`
-  message += `Найдено групп: *${searchResult.results.length}*\n`
+  message += `Найдено групп: *${searchResult.data.length}*\n`
 
-  if (searchResult.results.length > resultsToShow.length) {
-    message += `\n_Показано ${resultsToShow.length} из ${searchResult.results.length} результатов. Уточните запрос для более точного поиска._`
+  if (searchResult.data.length > resultsToShow.length) {
+    message += `\n_Показано ${resultsToShow.length} из ${searchResult.data.length} результатов. Уточните запрос для более точного поиска._`
   }
 
   return message
