@@ -22,8 +22,7 @@ export const formatSearchResult = (band, index) => {
 }
 
 export const formatAlbumInfo = album => {
-  const tracklist =
-    album.tracklist?.map(track => `${track.number}. ${track.title} (${track.duration})`).join('\n') || ''
+  const tracklist = album.tracklist?.map(track => `${track.number}. ${track.title} (${track.duration})`).join('\n') || ''
 
   return `
 💿 *${album.title}* 💿
@@ -37,10 +36,10 @@ ${tracklist}
 
 export const formatSearchResults = (query, searchResult, resultsToShow) => {
   let message = `🎸 *Результаты поиска для "${query}"*\n\n`
-  message += `Найдено групп: *${searchResult.data.length}*\n`
+  message += `Найдено групп: *${searchResult.length}*\n`
 
-  if (searchResult.data.length > resultsToShow.length) {
-    message += `\n_Показано ${resultsToShow.length} из ${searchResult.data.length} результатов. Уточните запрос для более точного поиска._`
+  if (searchResult.length > resultsToShow.length) {
+    message += `\n_Показано ${resultsToShow.length} из ${searchResult.length} результатов. Уточните запрос для более точного поиска._`
   }
 
   return message

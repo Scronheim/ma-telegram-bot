@@ -29,7 +29,7 @@ export const createBandKeyboard = (band, isRandom = true) => {
 export const createSearchResultsKeyboard = results => {
   const buttons = results.map((band, index) => [
     {
-      text: `${index + 1}. ${band.name} (${band.country}) - ${band.genre}`,
+      text: `${index + 1}. ${band.name} (${band.country}) - ${band.genres}`,
       callback_data: `search_select_${band.id}`
     }
   ])

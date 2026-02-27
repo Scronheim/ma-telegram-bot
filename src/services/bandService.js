@@ -4,8 +4,7 @@ import { formatBandInfo } from '../utils/formatters.js'
 import { createBandKeyboard } from '../utils/keyboards.js'
 import messages from '../constants/messages.js'
 
-export const sendBandInfo = async (ctx, band, loadingMsgId = null, isRandom = true) => {
-  const chatId = ctx.update.message.chat.id
+export const sendBandInfo = async (ctx, chatId, band, loadingMsgId = null, isRandom = true) => {
   const bandInfo = formatBandInfo(band)
 
   const options = {
@@ -45,9 +44,8 @@ export const sendRandomBand = async ctx => {
   }
 }
 
-export const sendBandFromSearch = async (ctx, bandId) => {
+export const sendBandFromSearch = async (ctx, chatId, bandId) => {
   try {
-    const chatId = ctx.update.message.chat.id
     const loadingMsg = await ctx.reply(messages.BAND_LOADING)
     const band = await api.getBandById(bandId)
 

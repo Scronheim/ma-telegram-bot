@@ -19,7 +19,7 @@ export const searchBands = async (ctx, chatId, query) => {
     // Single result - show band directly
     if (searchResult.length === 1) {
       const band = await api.getBandById(searchResult[0].id)
-      await sendBandInfo(ctx, band, loadingMsg.message_id, false)
+      await sendBandInfo(ctx, chatId, band, loadingMsg.message_id, false)
       return
     }
 
