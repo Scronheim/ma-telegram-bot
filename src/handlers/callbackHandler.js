@@ -14,16 +14,16 @@ const handleCallback = async ctx => {
 
   try {
     if (data === 'random_again') {
-      await ctx.answerCbQuery(callbackQueryId)
+      await ctx.answerCbQuery()
       await sendRandomBand(ctx, chatId)
       return
     }
 
     if (data === 'show_logo') {
-      await ctx.answerCbQuery(callbackQueryId)
       if (userStateData?.band?.logo_url) {
-        await ctx.sendPhoto(chatId, `${messages.MA_URL}${userStateData.band.logo_url}`, {
-          caption: `🎨 Логотип ${userStateData.band.name}`
+        await ctx.answerCbQuery()
+        await ctx.replyWithPhoto(`${messages.MA_URL}${userStateData.band.logo_url}`, {
+          caption: `Логотип ${userStateData.band.name}`
         })
       }
       return
@@ -39,7 +39,7 @@ const handleCallback = async ctx => {
     }
 
     if (data === 'back_to_search') {
-      await ctx.answerCbQuery(callbackQueryId)
+      await ctx.answerCbQuery()
       if (userStateData.searchResults && userStateData.searchQuery) {
         await searchBands(ctx, chatId, userStateData.searchQuery)
       } else {
@@ -50,14 +50,14 @@ const handleCallback = async ctx => {
     }
 
     if (data === 'new_search') {
-      await ctx.answerCbQuery(callbackQueryId)
+      await ctx.answerCbQuery()
       ctx.sendMessage(chatId, messages.SEARCH_PROMPT)
       userState.set(chatId, { state: 'searching' })
       return
     }
 
     if (data === 'main_menu') {
-      await ctx.answerCbQuery(callbackQueryId)
+      await ctx.answerCbQuery()
       userState.delete(chatId)
       await ctx.sendMessage(chatId, messages.MAIN_MENU, createMainMenuKeyboard())
       return
