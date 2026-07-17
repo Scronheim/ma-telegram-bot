@@ -64,11 +64,13 @@ const handleCallback = async ctx => {
     }
 
     if (data.startsWith('album_')) {
+      await ctx.answerCbQuery()
       await handleAlbumCallback(ctx, callbackQueryId, data, userStateData)
       return
     }
 
     if (data === 'back_to_band') {
+      await ctx.answerCbQuery()
       await handleBackToBand(ctx, userStateData)
       return
     }

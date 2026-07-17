@@ -8,7 +8,7 @@ export const createMainMenuKeyboard = () => ({
 
 export const createBandKeyboard = (band, isRandom = true) => {
   const albumButtons =
-    band.discography?.reduce((rows, album, index) => {
+    band.discography?.slice(0, 30).reduce((rows, album, index) => {
       if (index % 2 === 0) rows.push([])
       rows[rows.length - 1].push({
         text: `${album.release_date} - ${album.title} (${album.type})`,

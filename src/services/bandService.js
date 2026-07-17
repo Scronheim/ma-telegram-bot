@@ -33,11 +33,11 @@ export const sendBandInfo = async (ctx, chatId, band, loadingMsgId = null, isRan
   }
 }
 
-export const sendRandomBand = async ctx => {
+export const sendRandomBand = async (ctx, chatId) => {
   try {
     const loadingMsg = await ctx.reply(messages.RANDOM_LOADING)
     const band = await api.getRandomBand()
-    await sendBandInfo(ctx, band, loadingMsg.message_id, true)
+    await sendBandInfo(ctx, chatId, band, loadingMsg.message_id, true)
   } catch (error) {
     console.error('Error in sendRandomBand:', error)
     ctx.reply(messages.ERROR_GENERIC)
