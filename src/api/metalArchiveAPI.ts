@@ -1,12 +1,15 @@
 import axios from 'axios'
-import config from '../config/config.js'
+import config from '../config/config.ts'
+
+import type { Album, Band } from '../types'
 
 class MetalArchiveAPI {
+  baseURL: string
   constructor() {
-    this.baseURL = config.api.baseURL
+    this.baseURL = config.api.baseURL || ''
   }
 
-  async getRandomBand() {
+  async getRandomBand(): Promise<Band> {
     try {
       const response = await axios.get(`${this.baseURL}/band/random`)
       return response.data.data
@@ -16,7 +19,7 @@ class MetalArchiveAPI {
     }
   }
 
-  async searchBands(query) {
+  async searchBands(query: string): Promise<Band[]> {
     try {
       const response = await axios.get(`${this.baseURL}/band/search?query=${encodeURIComponent(query)}`)
       return response.data.data
@@ -26,7 +29,7 @@ class MetalArchiveAPI {
     }
   }
 
-  async getBandById(bandId) {
+  async getBandById(bandId: string): Promise<Band | null> {
     try {
       const response = await axios.get(`${this.baseURL}/band/${bandId}`)
       return response.data.data
@@ -36,12 +39,13 @@ class MetalArchiveAPI {
     }
   }
 
-  async getAlbumInfo(albumId) {
+  async getAlbumInfo(albumId: string): Promise<Album | null> {
     try {
       const response = await axios.get(`${this.baseURL}/album/${albumId}`)
       return response.data.data
     } catch (error) {
       console.error('Error fetching album info:', error.message)
+      return null
     }
   }
 }

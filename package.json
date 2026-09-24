@@ -9,12 +9,17 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mtcute/dispatcher": "^0.32.1",
+    "@mtcute/node": "^0.32.1",
     "axios": "^1.13.2",
     "node-telegram-bot-api": "^0.67.0",
-    "telegraf": "^4.16.3"
+    "telegraf": "^4.16.3",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@types/node": "^22.20.2",
     "eslint": "^8.53.0",
-    "prettier": "^3.0.3"
+    "prettier": "^3.0.3",
+    "typescript": "^6.0.3"
   }
 }

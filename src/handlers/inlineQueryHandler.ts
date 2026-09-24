@@ -1,5 +1,5 @@
-import api from '../api/metalArchiveAPI.js'
-import config from '../config/config.js'
+import api from '../api/metalArchiveAPI.ts'
+import config from '../config/config.ts'
 
 const handleInlineQuery = async (bot, msg) => {
   const inlineQueryId = msg.id
