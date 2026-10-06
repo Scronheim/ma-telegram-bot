@@ -1,7 +1,7 @@
 import axios from 'axios'
 import config from '../config/config.ts'
 
-import type { Album, Band } from '../types'
+import type { Album, Band, BandArtist } from '../types'
 
 class MetalArchiveAPI {
   baseURL: string
@@ -45,6 +45,16 @@ class MetalArchiveAPI {
       return response.data.data
     } catch (error) {
       console.error('Error fetching album info:', error.message)
+      return null
+    }
+  }
+
+  async getArtistInfo(memberId: string): Promise<BandArtist | null> {
+    try {
+      const response = await axios.get(`${this.baseURL}/artist/${memberId}`)
+      return response.data.data
+    } catch (error) {
+      console.error('Error fetching member info:', error.message)
       return null
     }
   }

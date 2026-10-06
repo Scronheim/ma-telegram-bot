@@ -54,6 +54,31 @@ export interface MemberLineUp {
   }[]
   url: string
 }
+export interface ArtistBand {
+  id: number | null
+  name: string
+  name_slug: string
+  albums: []
+  role: string
+}
+
+export interface BandArtist {
+  id: number
+  fullname: string
+  fullname_slug: string
+  age: string
+  biography?: string
+  gender: string
+  guest_session: ArtistBand[]
+  links: SocialLink[]
+  live: ArtistBand[]
+  misc_staff: ArtistBand[]
+  active_bands: ArtistBand[]
+  past_bands: ArtistBand[]
+  photo_url?: string
+  place_of_birth?: string
+  updated_at: string
+}
 
 export interface Track {
   id: number | string | null

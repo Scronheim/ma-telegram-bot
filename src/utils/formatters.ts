@@ -1,6 +1,6 @@
 import { md } from '@mtcute/markdown-parser'
 
-import type { Band, Album } from '../types'
+import type { Band, Album, BandArtist } from '../types'
 
 export const formatBandInfo = (band: Band) => {
   const currentLineup = band.current_lineup?.map((l) => `${l.fullname} - ${l.role}`).join('\n') || ''
@@ -36,11 +36,22 @@ export const formatAlbumInfo = (album: Album) => {
    **${album.band_names.join(', ')}**
 💿 **${album.title}** 💿
 
-**Дата релиза:** ${album.release_date || 'Не указан'}
+**Дата релиза:** ${album.release_date || 'Не указана'}
 **Тип:** ${album.type || 'Не указан'}
 **Треклист:**
 ${tracklist}
   `.trim()
+  )
+}
+
+export const formatArtistInfo = (artist: BandArtist) => {
+  return md(
+    `
+**Имя:** ${artist.fullname || 'Не указано'}
+**Место рождения:** ${artist.place_of_birth || 'Не указано'}
+**Возраст:** ${artist.age || 'Не указан'}
+**Пол:** ${artist.gender || 'Не указан'}
+   `.trim()
   )
 }
 

@@ -29,7 +29,7 @@ export const searchBands = async (msg: MessageContext) => {
 
     // No results
     if (!searchResult || searchResult.length === 0) {
-      await msg.edit({ text: messages.NO_RESULTS(bandName) })
+      await msg.replyText(messages.NO_RESULTS(bandName))
       return
     }
 

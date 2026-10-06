@@ -1,7 +1,20 @@
 import { InputMedia, type TelegramClient } from '@mtcute/node'
 
-import { sendRandomBandFromCallback, sendBandbyId } from '../services/bandService.ts'
+import {
+  sendRandomBandFromCallback,
+  sendBandbyId,
+  sendBandLinksFromCallback,
+  sendBandCurrentLineupCallback,
+  sendBandPastLineupCallback
+} from '../services/bandService.ts'
 import { sendAlbumInfoFromCallback, downloadAlbum } from '../services/albumService.ts'
+import {
+  sendArtistInfoFromCallback,
+  sendArtistLinksFromCallback,
+  sendArtistActiveBands,
+  sendArtistPastBands,
+  sendArtistGuestBands
+} from '../services/artistService.ts'
 import userState from '../utils/userState.ts'
 
 import { createBandKeyboard } from '../utils/keyboards.ts'
@@ -14,6 +27,7 @@ export const handleCallback = async (callback: CallbackQueryContext, bot: Telegr
   const action = data[1]
   const id = data[2]
   const userStateData = userState.get(callback.chat.id)
+  await bot.setTyping({ peerId: callback.chat })
 
   try {
     if (action === 'getRandomBand') {
@@ -23,6 +37,7 @@ export const handleCallback = async (callback: CallbackQueryContext, bot: Telegr
     } else if (action === 'showLogo') {
       if (userStateData?.band?.logo_url) {
         const message = await callback.getMessage()
+        await callback.answer({})
         await bot.replyMedia(
           message,
           InputMedia.photo(`${messages.MA_URL}${userStateData.band.logo_url}`, {
@@ -35,9 +50,24 @@ export const handleCallback = async (callback: CallbackQueryContext, bot: Telegr
     } else if (action === 'getBandById') {
       await sendBandbyId(callback, bot, id)
     } else if (action === 'downloadAlbum') {
-      await downloadAlbum(callback, bot, id)
+      await downloadAlbum(callback, bot)
+    } else if (action === 'showLinks') {
+      await sendBandLinksFromCallback(callback, bot)
+    } else if (action === 'showCurrentLineup') {
+      await sendBandCurrentLineupCallback(callback, bot)
+    } else if (action === 'showPastLineup') {
+      await sendBandPastLineupCallback(callback, bot)
+    } else if (action === 'showBandMember') {
+      await sendArtistInfoFromCallback(callback, bot, id)
+    } else if (action === 'getArtistLinks') {
+      await sendArtistLinksFromCallback(callback, bot)
+    } else if (action === 'getArtistActiveBands') {
+      await sendArtistActiveBands(callback, bot)
+    } else if (action === 'getArtistPastBands') {
+      await sendArtistPastBands(callback, bot)
+    } else if (action === 'getArtistGuestBands') {
+      await sendArtistGuestBands(callback, bot)
     }
-    await callback.answer({})
     // if (data.startsWith('search_select_')) {
     //   const bandId = data.replace('search_select_', '')
     //   await ctx.answerCbQuery(callbackQueryId, {

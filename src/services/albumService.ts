@@ -40,12 +40,12 @@ export const sendAlbumInfoFromCallback = async (
     await bot.replyMedia(
       message,
       InputMedia.photo(`${messages.MA_URL}${album.cover_url}`, { caption: formattedAlbumInfo }),
-      { replyMarkup: BotKeyboard.inline(keyboard) }
+      { replyMarkup: keyboard.length ? BotKeyboard.inline(keyboard) : undefined }
     )
   else await bot.replyText(message, formattedAlbumInfo)
 }
 
-export const downloadAlbum = async (callback: CallbackQueryContext, bot: TelegramClient, albumId: string) => {
+export const downloadAlbum = async (callback: CallbackQueryContext, bot: TelegramClient) => {
   const userStateData = userState.get(callback.chat.id)
 
   const message = await callback.getMessage()

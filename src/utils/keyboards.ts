@@ -1,7 +1,7 @@
 import { BotKeyboard } from '@mtcute/node'
 import { CallbackDataBuilder } from '@mtcute/dispatcher'
 
-import type { Band } from '../types'
+import type { Band, SocialLink, MemberLineUp, BandArtist, ArtistBand } from '../types'
 
 const MainButton = new CallbackDataBuilder('main', 'action', 'value')
 
@@ -33,20 +33,50 @@ export const createBandKeyboard = (band: Band, isRandom: boolean = true) => {
     albumRows.push(row)
   }
 
-  // Нижний ряд с кнопками действий
-  const actionButtons = []
+  // Отдельный ряд с кнопкой показа логотипа
+  const logoButtons = []
   if (band.logo_url) {
-    actionButtons.push(BotKeyboard.callback('📷 Показать логотип', MainButton.build({ action: 'showLogo', value: '' })))
+    logoButtons.push(BotKeyboard.callback('📷 Показать логотип', MainButton.build({ action: 'showLogo', value: '' })))
   }
+
+  // Отдельный ряд с кнопкой для ссылок
+  const linksButtons = []
+  if (band.links.length) {
+    linksButtons.push(BotKeyboard.callback('🔗 Показать ссылки', MainButton.build({ action: 'showLinks', value: '' })))
+  }
+
+  // Отдельный ряд с кнопками состава
+  const middleButtons = []
+
+  if (band.current_lineup.length) {
+    middleButtons.push(
+      BotKeyboard.callback('🎶 Текущий состав', MainButton.build({ action: 'showCurrentLineup', value: '' }))
+    )
+  }
+  if (band.past_lineup.length) {
+    middleButtons.push(
+      BotKeyboard.callback('🎶 Прошлый состав', MainButton.build({ action: 'showPastLineup', value: '' }))
+    )
+  }
+
+  // Нижний ряд
+  const bottonButtons = []
+
   if (isRandom) {
-    actionButtons.push(
+    bottonButtons.push(
       BotKeyboard.callback('🔄 Новая случайная группа', MainButton.build({ action: 'randomAgain', value: '' }))
     )
   }
 
   const allRows = [...albumRows]
-  if (actionButtons.length > 0) {
-    allRows.push(actionButtons)
+  if (logoButtons.length > 0) {
+    allRows.push(logoButtons)
+  }
+  if (middleButtons.length > 0) {
+    allRows.push(middleButtons)
+  }
+  if (bottonButtons.length > 0) {
+    allRows.push(bottonButtons)
   }
 
   return BotKeyboard.inline(allRows)
@@ -82,10 +112,77 @@ export const createAlbumKeyboard = (userStateData) => {
   return BotKeyboard.inline(rows)
 }
 
-export const createColumnKeyboard = (buttons, columns = 2) => {
-  const inline_keyboard = []
-  for (let i = 0; i < buttons.length; i += columns) {
-    inline_keyboard.push(buttons.slice(i, i + columns))
+export const createLinksKeyboard = (links: SocialLink[]) => {
+  const socialLinkRows: ReturnType<typeof BotKeyboard.url>[][] = []
+
+  for (let i = 0; i < links.length; i += 2) {
+    const row = [BotKeyboard.url(links[i].social, links[i].url)]
+    if (i + 1 < links.length) {
+      row.push(BotKeyboard.url(links[i + 1].social, links[i + 1].url))
+    }
+    socialLinkRows.push(row)
   }
-  return { inline_keyboard }
+  return BotKeyboard.inline(socialLinkRows)
+}
+
+export const createArtistBandsKeyboard = (bands: ArtistBand[]) => {
+  const rows = bands.map((band, index) => {
+    if (band.id) {
+      return [
+        BotKeyboard.callback(
+          `${index + 1}. ${band.name}`,
+          MainButton.build({ action: 'getBandById', value: band.id?.toString() || '' })
+        )
+      ]
+    } else {
+      return [BotKeyboard.disabled(`${index + 1}. ${band.name}`, { style: { bgDanger: true } })]
+    }
+  })
+  return BotKeyboard.inline(rows)
+}
+
+export const createArtistKeyboard = (artist: BandArtist) => {
+  const rows = []
+  if (artist.active_bands.length) {
+    rows.push([
+      BotKeyboard.callback('Активные группы', MainButton.build({ action: 'getArtistActiveBands', value: '' }))
+    ])
+  }
+  if (artist.past_bands.length) {
+    rows.push([BotKeyboard.callback('Прошлые группы', MainButton.build({ action: 'getArtistPastBands', value: '' }))])
+  }
+  if (artist.live.length) {
+    rows.push([BotKeyboard.callback('Live', MainButton.build({ action: 'getArtistLiveBands', value: '' }))])
+  }
+  if (artist.guest_session.length) {
+    rows.push([BotKeyboard.callback('Как гость', MainButton.build({ action: 'getArtistGuestBands', value: '' }))])
+  }
+  if (artist.links.length) {
+    rows.push([BotKeyboard.callback('Ссылки', MainButton.build({ action: 'getArtistLinks', value: '' }))])
+  }
+
+  return BotKeyboard.inline(rows)
+}
+
+export const createLineupKeyboard = (lineup: MemberLineUp[]) => {
+  const lineupRows: ReturnType<typeof BotKeyboard.callback>[][] = []
+
+  for (let i = 0; i < lineup.length; i += 2) {
+    const row = [
+      BotKeyboard.callback(
+        `${lineup[i].fullname} (${lineup[i].role})`,
+        MainButton.build({ action: 'showBandMember', value: lineup[i].id.toString() })
+      )
+    ]
+    if (i + 1 < lineup.length) {
+      row.push(
+        BotKeyboard.callback(
+          `${lineup[i + 1].fullname} (${lineup[i + 1].role})`,
+          MainButton.build({ action: 'showBandMember', value: lineup[i + 1].id.toString() })
+        )
+      )
+    }
+    lineupRows.push(row)
+  }
+  return BotKeyboard.inline(lineupRows)
 }
