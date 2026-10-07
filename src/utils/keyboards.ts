@@ -1,12 +1,24 @@
 import { BotKeyboard } from '@mtcute/node'
 import { CallbackDataBuilder } from '@mtcute/dispatcher'
 
-import type { Band, SocialLink, MemberLineUp, BandArtist, ArtistBand } from '../types'
+import type {
+  Band,
+  SocialLink,
+  MemberLineUp,
+  BandArtist,
+  ShortBand,
+  ArtistBand,
+  ShortAlbum,
+  Album,
+  User,
+  UserState
+} from '../types'
 
 const MainButton = new CallbackDataBuilder('main', 'action', 'value')
 
 export const createMainMenuKeyboard = BotKeyboard.inline([
-  [BotKeyboard.callback('Случайная группа', MainButton.build({ action: 'getRandomBand', value: '' }))]
+  [BotKeyboard.callback('Случайная группа', MainButton.build({ action: 'getRandomBand', value: '' }))],
+  [BotKeyboard.callback('Профиль', MainButton.build({ action: 'getUserProfile', value: '' }))]
 ])
 
 export const createBandKeyboard = (band: Band, isRandom: boolean = true) => {
@@ -19,14 +31,14 @@ export const createBandKeyboard = (band: Band, isRandom: boolean = true) => {
     const row = [
       BotKeyboard.callback(
         `${albums[i].release_date} - ${albums[i].title} (${albums[i].type})`,
-        MainButton.build({ action: 'getAlbum', value: albums[i].id.toString() })
+        MainButton.build({ action: 'getAlbumById', value: albums[i].id.toString() })
       )
     ]
     if (i + 1 < albums.length) {
       row.push(
         BotKeyboard.callback(
           `${albums[i + 1].release_date} - ${albums[i + 1].title} (${albums[i + 1].type})`,
-          MainButton.build({ action: 'getAlbum', value: albums[i + 1].id.toString() })
+          MainButton.build({ action: 'getAlbumById', value: albums[i + 1].id.toString() })
         )
       )
     }
@@ -100,14 +112,30 @@ export const createSearchResultsKeyboard = (results: Band[]) => {
   return BotKeyboard.inline(rows)
 }
 
-export const createAlbumKeyboard = (userStateData) => {
+export const createAlbumKeyboard = (userStateData: UserState) => {
   const rows = [
     [BotKeyboard.callback('⬅️ Назад к результатам поиска', MainButton.build({ action: 'backToSearch', value: '' }))]
   ]
 
-  if (userStateData?.band.id) {
+  if (userStateData.band?.id) {
     rows.unshift([BotKeyboard.callback('⬅️ Назад к группе', MainButton.build({ action: 'backToBand', value: '' }))])
   }
+
+  return BotKeyboard.inline(rows)
+}
+
+export const createUserKeyboard = (user: User) => {
+  const rows = []
+  const someFavBandsAreNull = user.favorite_bands.some((b) => b.id === null)
+  const someFavAlbumsAreNull = user.favorite_albums.some((a) => a.id === null)
+  if (!someFavBandsAreNull)
+    rows.push([
+      BotKeyboard.callback('❤️ Избранные группы', MainButton.build({ action: 'showUserFavoriteBands', value: '' }))
+    ])
+  if (!someFavAlbumsAreNull)
+    rows.push([
+      BotKeyboard.callback('❤️ Избранные альбомы', MainButton.build({ action: 'showUserFavoriteAlbums', value: '' }))
+    ])
 
   return BotKeyboard.inline(rows)
 }
@@ -125,7 +153,11 @@ export const createLinksKeyboard = (links: SocialLink[]) => {
   return BotKeyboard.inline(socialLinkRows)
 }
 
-export const createArtistBandsKeyboard = (bands: ArtistBand[]) => {
+export const createSiteLinkKeyboard = () => {
+  return BotKeyboard.inline([[BotKeyboard.url('www.metal-archives.ru', 'https://www.metal-archives.ru')]])
+}
+
+export const createBandsKeyboard = (bands: ShortBand[] | ArtistBand[]) => {
   const rows = bands.map((band, index) => {
     if (band.id) {
       return [
@@ -136,6 +168,22 @@ export const createArtistBandsKeyboard = (bands: ArtistBand[]) => {
       ]
     } else {
       return [BotKeyboard.disabled(`${index + 1}. ${band.name}`, { style: { bgDanger: true } })]
+    }
+  })
+  return BotKeyboard.inline(rows)
+}
+
+export const createAlbumsKeyboard = (albums: ShortAlbum[] | Album[]) => {
+  const rows = albums.map((album, index) => {
+    if (album.id) {
+      return [
+        BotKeyboard.callback(
+          `${index + 1}. ${album.band_names.join(', ')} - ${album.title}`,
+          MainButton.build({ action: 'getAlbumById', value: album.id?.toString() || '' })
+        )
+      ]
+    } else {
+      return [BotKeyboard.disabled(`${index + 1}. ${album.title}`, { style: { bgDanger: true } })]
     }
   })
   return BotKeyboard.inline(rows)

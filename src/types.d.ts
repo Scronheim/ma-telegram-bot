@@ -92,3 +92,62 @@ export interface Track {
   is_edit?: boolean
   url: string
 }
+
+export interface ShortBand {
+  id: number
+  name: string
+  name_slug: string
+  genres: string
+  country: string
+  photo_url: string | null
+  logo_url: string | null
+}
+
+export interface ShortAlbum {
+  id: number
+  title: string
+  title_slug: string
+  band_names: string[]
+  band_names_slug: string[]
+  type: string
+  release_date: string
+  cover_url: string | null
+}
+
+export interface Rating {
+  id: number
+  rating: number
+}
+
+export interface TelegramUser {
+  id: number
+  auth_date: number
+  username: string
+  first_name: string
+  last_name: string
+  photo_url: string
+  hash: string
+}
+
+export interface User {
+  username: string
+  real_name: string
+  gender: string
+  country: string
+  bands_ratings: Rating[]
+  albums_ratings: Rating[]
+  favorite_genre: string
+  favorite_bands: ShortBand[]
+  favorite_albums: ShortAlbum[]
+  role: 'admin' | 'moderator' | 'user'
+  avatar_color: string
+  telegram: TelegramUser | null
+  created_at?: string
+}
+
+export interface UserState {
+  band?: Band
+  album?: Album
+  artist?: ArtistBand
+  user?: User
+}

@@ -2,7 +2,7 @@ import { InputMedia } from '@mtcute/node'
 
 import api from '../api/metalArchiveAPI.ts'
 import { formatArtistInfo } from '../utils/formatters.ts'
-import { createArtistKeyboard, createLinksKeyboard, createArtistBandsKeyboard } from '../utils/keyboards.ts'
+import { createArtistKeyboard, createLinksKeyboard, createBandsKeyboard } from '../utils/keyboards.ts'
 import messages from '../constants/messages.ts'
 import userState from '../utils/userState.ts'
 
@@ -53,7 +53,7 @@ export const sendArtistActiveBands = async (callback: CallbackQueryContext, bot:
     const activeBands = user.artist.active_bands
     const message = await callback.getMessage()
     await callback.answer({})
-    await bot.replyText(message, 'Активные группы', { replyMarkup: createArtistBandsKeyboard(activeBands) })
+    await bot.replyText(message, 'Активные группы', { replyMarkup: createBandsKeyboard(activeBands) })
   } catch (error) {
     console.error('Error in sendArtistActiveBands:', error)
     await callback.answer({ text: messages.ERROR_GENERIC })
@@ -66,7 +66,7 @@ export const sendArtistPastBands = async (callback: CallbackQueryContext, bot: T
     const pastBands = user.artist.past_bands
     const message = await callback.getMessage()
     await callback.answer({})
-    await bot.replyText(message, 'Прошлые группы', { replyMarkup: createArtistBandsKeyboard(pastBands) })
+    await bot.replyText(message, 'Прошлые группы', { replyMarkup: createBandsKeyboard(pastBands) })
   } catch (error) {
     console.error('Error in sendArtistPastBands:', error)
     await callback.answer({ text: messages.ERROR_GENERIC })
@@ -79,7 +79,7 @@ export const sendArtistGuestBands = async (callback: CallbackQueryContext, bot: 
     const guestSessions = user.artist.guest_session
     const message = await callback.getMessage()
     await callback.answer({})
-    await bot.replyText(message, 'Как гость', { replyMarkup: createArtistBandsKeyboard(guestSessions) })
+    await bot.replyText(message, 'Как гость', { replyMarkup: createBandsKeyboard(guestSessions) })
   } catch (error) {
     console.error('Error in sendArtistGuestBands:', error)
     await callback.answer({ text: messages.ERROR_GENERIC })

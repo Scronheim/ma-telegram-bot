@@ -15,6 +15,11 @@ import {
   sendArtistPastBands,
   sendArtistGuestBands
 } from '../services/artistService.ts'
+import {
+  sendTelegramUserFromCallback,
+  sendTelegramUserFavBands,
+  sendTelegramUserFavAlbum
+} from '../services/userService.ts'
 import userState from '../utils/userState.ts'
 
 import { createBandKeyboard } from '../utils/keyboards.ts'
@@ -32,7 +37,7 @@ export const handleCallback = async (callback: CallbackQueryContext, bot: Telegr
   try {
     if (action === 'getRandomBand') {
       await sendRandomBandFromCallback(callback, bot)
-    } else if (action === 'getAlbum') {
+    } else if (action === 'getAlbumById') {
       await sendAlbumInfoFromCallback(callback, bot, id)
     } else if (action === 'showLogo') {
       if (userStateData?.band?.logo_url) {
@@ -67,6 +72,12 @@ export const handleCallback = async (callback: CallbackQueryContext, bot: Telegr
       await sendArtistPastBands(callback, bot)
     } else if (action === 'getArtistGuestBands') {
       await sendArtistGuestBands(callback, bot)
+    } else if (action === 'getUserProfile') {
+      await sendTelegramUserFromCallback(callback, bot)
+    } else if (action === 'showUserFavoriteBands') {
+      await sendTelegramUserFavBands(callback, bot)
+    } else if (action === 'showUserFavoriteAlbums') {
+      await sendTelegramUserFavAlbum(callback, bot)
     }
     // if (data.startsWith('search_select_')) {
     //   const bandId = data.replace('search_select_', '')

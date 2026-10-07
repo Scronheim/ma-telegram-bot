@@ -11,18 +11,12 @@ import type { TelegramClient } from '@mtcute/node'
 import type { Dispatcher, MessageContext, CallbackQueryContext } from '@mtcute/dispatcher'
 
 const handleStart = (msg: MessageContext) => {
-  msg.replyText(messages.WELCOME, {
-    replyMarkup: createMainMenuKeyboard
-  })
+  msg.replyText(messages.WELCOME, { replyMarkup: createMainMenuKeyboard })
 }
 
-const handleMessage = async (msg: MessageContext) => {
-  await searchBands(msg)
-}
+const handleMessage = async (msg: MessageContext) => await searchBands(msg)
 
-const handleRandom = async (msg: MessageContext) => {
-  await sendRandomBand(msg)
-}
+const handleRandom = async (msg: MessageContext) => await sendRandomBand(msg)
 
 export const registerCommands = (dispatcher: Dispatcher, bot: TelegramClient) => {
   dispatcher.onNewMessage(filters.command('start'), (msg: MessageContext) => handleStart(msg))

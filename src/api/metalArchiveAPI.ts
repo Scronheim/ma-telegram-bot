@@ -1,7 +1,7 @@
 import axios from 'axios'
 import config from '../config/config.ts'
 
-import type { Album, Band, BandArtist } from '../types'
+import type { Album, Band, BandArtist, User } from '../types'
 
 class MetalArchiveAPI {
   baseURL: string
@@ -55,6 +55,16 @@ class MetalArchiveAPI {
       return response.data.data
     } catch (error) {
       console.error('Error fetching member info:', error.message)
+      return null
+    }
+  }
+
+  async getTelegramUser(userId: number): Promise<User | null> {
+    try {
+      const response = await axios.get(`${this.baseURL}/auth/telegram/${userId}`)
+      return response.data.data
+    } catch (error) {
+      console.error('Error fetching telegram user info:', error.message)
       return null
     }
   }
